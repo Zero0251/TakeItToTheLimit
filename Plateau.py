@@ -7,7 +7,6 @@ from Bonus import *
 from SunMoon import *
 import bisect
 
-compteur = 0
 
 class CombiATester:
 	def __init__(self, combi, dispos, colonne_relaxee, score):
@@ -261,20 +260,23 @@ class Plateau:
 			if dir == 1:  # Up to left
 				debut_col_impactees = max(0, indice_col - 3)
 				fin_col_impactees = min(6, indice_col + 3) + 1
-				for indice_ligne in old_colonnes[i].positions_tuiles_placees:
+				# if i == 2:# TODO Thomas
+				for indice_ligne in old_colonnes[i].positions_tuiles_placees: # TODO Thomas
 					exceptions.append(max(0, indice_col - 3) + indice_ligne)
+					# print("Exceptions pour l'ancienne colonne " + str(old_colonnes[i].id) + " sur la direction 1: ")
+					# print(exceptions)
 			elif delta == -2:  # Up to right
 				debut_col_impactees = max(0, 3 - indice_col)
 				fin_col_impactees = min(6, 9 - indice_col) + 1
-				for indice_ligne in old_colonnes[i].positions_tuiles_placees:
+				for indice_ligne in old_colonnes[i].positions_tuiles_placees: # TODO Thomas
 					exceptions.append(max(0, 3 - indice_col) + indice_ligne)
 			else:  # Left to right
 				debut_col_impactees = max(0, indice_col - 3)
 				fin_col_impactees = min(6, indice_col + 3) + 1
-				for indice_ligne in old_colonnes[i].positions_tuiles_placees:
-					exceptions.append(min(6, indice_col + 3) - indice_ligne)
+				# for indice_ligne in old_colonnes[i].positions_tuiles_placees: # TODO Thomas
+				# 	exceptions.append(min(6, indice_col + 3) - indice_ligne)
 			for j in range(debut_col_impactees, fin_col_impactees):
-				if j not in exceptions:  # TODO Thomas
+				if j not in exceptions:
 					for val in valeurs_possibles:
 						dispos[j][val] += 1
 		# Ne pas oublier les colonnes à score nul non valorisées par la combi
@@ -303,6 +305,16 @@ class Plateau:
 				if j not in exceptions:
 					for val in range(4):
 						dispos[j][val] += 1
+		# if dir == 1:
+		# 	print(self)
+		# 	print("Tuiles disponibles : ")
+		# 	for t in self.tuiles_restantes:
+		# 		print(str(self.tuiles[t].directions[0]) + " " + str(self.tuiles[t].directions[1]) + " " + str(self.tuiles[t].directions[2]))
+		# 	print("Dispos générales : " + str(self.candidats.nb_vals[dir]))
+		# 	print("old combi : " + str(old_combi))
+		# 	print("Ce qui donne les dispos par colonnes : ")
+		# 	for d in dispos:
+		# 		print(d)
 		return dispos
 		
 	# Calcul du score pour toutes les configurations
@@ -469,14 +481,25 @@ class Plateau:
 		return max_score_possible
 	
 	def __evaluer_combi_all_dirs(self, combi, dispos_generales, dispos_par_col, colonne_relaxee, max_score_possible, score, vides, scores_col, dir, colonnes, cols_non_remplies_score_nul, old_combi, old_colonne):
+		# Debug
+		# if dir == 1 and old_combi[0] == [2, 1, 1, 1, 1, 1, 1] and combi == [1, 1, 1, 1, 2, 1, 1]:
+		# 	print("Combi " + str(combi) + " possible ?")
 		if self.__combi_possible(dispos_generales[dir]) and self.__combi_possible2(dispos_par_col):
 			if dir != 2:
+				# if dir == 1 and old_combi[0] == [2, 1, 1, 1, 1, 1, 1] and combi == [1, 1, 1, 1, 2, 1, 1]:
+				# 	print("Oui")
 				old_combi2 = [[j for j in i] for i in old_combi]
 				old_combi2.append(combi)
 				old_colonne2 = [[j for j in i] for i in old_colonne]
 				old_colonne2.append(colonnes)
 				return self.__evalue_all_dirs(old_combi2, old_colonne2, max_score_possible, score, dir + 1, scores_col, vides, dispos_generales, cols_non_remplies_score_nul)
+			# if score > max_score_possible:
+			# 	print("Combinaisons dir 0 meilleure : " + str(old_combi[0]) + " Combi 1 meilleure : " + str(old_combi[1]))
 			return max(score, max_score_possible)
+		# if dir == 1 and old_combi[0] == [2, 1, 1, 1, 1, 1, 1] and combi == [1, 1, 1, 1, 2, 1, 1]:
+		# 	print("Non par ce que : " + str(dispos_generales[dir]) + " ou parce que : ")
+		# 	for d in dispos_par_col:
+		# 		print(d)
 		# On essaie des combinaisons moins contraignantes (en évitant de tester plusieurs fois la même combi)
 		for i in range(colonne_relaxee, len(combi)):
 			if combi[i] > 0:  # On ne peut pas relaxer plus
@@ -488,15 +511,15 @@ class Plateau:
 						indice = combi[i] - 1
 					combi[i] -= 1
 					dispos_generales[dir][indice] += vides[dir][colonnes[i].id]
-					dispos_par_col[i][indice] += vides[dir][colonnes[i].id]
+					dispos_par_col[colonnes[i].id][indice] += vides[dir][colonnes[i].id]
 					if combi[i] > 0:
 						dispos_generales[dir][combi[i] - 1] -= vides[dir][colonnes[i].id]
-						dispos_par_col[i][combi[i] - 1] -= vides[dir][colonnes[i].id]
+						dispos_par_col[colonnes[i].id][combi[i] - 1] -= vides[dir][colonnes[i].id]
 					max_score_possible = self.__evaluer_combi_all_dirs(combi, dispos_generales, dispos_par_col, i, max_score_possible, score2, vides, scores_col, dir, colonnes, cols_non_remplies_score_nul, old_combi, old_colonne)  # Récursif
 					dispos_generales[dir][indice] -= vides[dir][colonnes[i].id]
-					dispos_par_col[i][indice] -= vides[dir][colonnes[i].id]
+					dispos_par_col[colonnes[i].id][indice] -= vides[dir][colonnes[i].id]
 					if combi[i] > 0:
 						dispos_generales[dir][combi[i] - 1] += vides[dir][colonnes[i].id]
-						dispos_par_col[i][combi[i] - 1] += vides[dir][colonnes[i].id]
+						dispos_par_col[colonnes[i].id][combi[i] - 1] += vides[dir][colonnes[i].id]
 					combi[i] += 1
 		return max_score_possible

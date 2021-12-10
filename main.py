@@ -1,38 +1,39 @@
-#!/usr/bin/python
+"Can"#!/usr/bin/python
 # -*- coding: utf-8 -*-
 import random
 from Plateau import *
 import bisect
 
+
 def init_tuiles():
     retour = [
-        # Tuile(Symbol.Moon, 0, 0, 2, 1),
-        # Tuile(Symbol.Sun, 0, 0, 1, 3),
-        # Tuile(Symbol.Sun, 0, 0, 2, 2),
-        # Tuile(Symbol.Moon, 0, 0, 1, 2),
-        # Tuile(Symbol.Moon, 0, 0, 3, 0),
-        # Tuile(Symbol.Sun, 0, 0, 3, 1),
-        # Tuile(Symbol.Sun, 0, 1, 2, 1),
-        # Tuile(Symbol.Moon, 0, 1, 0, 2),
-        # Tuile(Symbol.Moon, 0, 1, 3, 1),
-        # Tuile(Symbol.Sun, 0, 1, 2, 3),
-        # Tuile(Symbol.Sun, 0, 1, 3, 2),
-        # Tuile(Symbol.Moon, 0, 1, 2, 0),
-        # Tuile(Symbol.Moon, 0, 2, 0, 3),
-        # Tuile(Symbol.Moon, 0, 2, 2, 1),
-        # Tuile(Symbol.Sun, 0, 0, 0, 2),
-        # Tuile(Symbol.Sun, 0, 2, 0, 2),
-        # Tuile(Symbol.Sun, 0, 2, 2, 2),
-        # Tuile(Symbol.Moon, 0, 0, 0, 3),
-        # Tuile(Symbol.Moon, 0, 2, 3, 2),
-        # Tuile(Symbol.Sun, 0, 2, 2, 0),
-        # Tuile(Symbol.Sun, 0, 3, 0, 3),
-        # Tuile(Symbol.Sun, 0, 3, 1, 2),
-        # Tuile(Symbol.Sun, 0, 3, 2, 1),
-        # Tuile(Symbol.Moon, 0, 3, 0, 2),
-        # Tuile(Symbol.Moon, 0, 3, 2, 2),
-        # Tuile(Symbol.Sun, 0, 0, 2, 0),
-        # Tuile(Symbol.Sun, 0, 3, 2, 3),
+        Tuile(Symbol.Moon, 0, 0, 2, 1),
+        Tuile(Symbol.Sun, 0, 0, 1, 3),
+        Tuile(Symbol.Sun, 0, 0, 2, 2),
+        Tuile(Symbol.Moon, 0, 0, 1, 2),
+        Tuile(Symbol.Moon, 0, 0, 3, 0),
+        Tuile(Symbol.Sun, 0, 0, 3, 1),
+        Tuile(Symbol.Sun, 0, 1, 2, 1),
+        Tuile(Symbol.Moon, 0, 1, 0, 2),
+        Tuile(Symbol.Moon, 0, 1, 3, 1),
+        Tuile(Symbol.Sun, 0, 1, 2, 3),
+        Tuile(Symbol.Sun, 0, 1, 3, 2),
+        Tuile(Symbol.Moon, 0, 1, 2, 0),
+        Tuile(Symbol.Moon, 0, 2, 0, 3),
+        Tuile(Symbol.Moon, 0, 2, 2, 1),
+        Tuile(Symbol.Sun, 0, 0, 0, 2),
+        Tuile(Symbol.Sun, 0, 2, 0, 2),
+        Tuile(Symbol.Sun, 0, 2, 2, 2),
+        Tuile(Symbol.Moon, 0, 0, 0, 3),
+        Tuile(Symbol.Moon, 0, 2, 3, 2),
+        Tuile(Symbol.Sun, 0, 2, 2, 0),
+        Tuile(Symbol.Sun, 0, 3, 0, 3),
+        Tuile(Symbol.Sun, 0, 3, 1, 2),
+        Tuile(Symbol.Sun, 0, 3, 2, 1),
+        Tuile(Symbol.Moon, 0, 3, 0, 2),
+        Tuile(Symbol.Moon, 0, 3, 2, 2),
+        Tuile(Symbol.Sun, 0, 0, 2, 0),
+        Tuile(Symbol.Sun, 0, 3, 2, 3),
         
         Tuile(Symbol.Moon, 40, 0, 1, 0),
         Tuile(Symbol.Sun, 40, 1, 0, 1),
@@ -162,7 +163,6 @@ while len(candidats) != 0:
         print(str(id) + " ", end='')
     print("Nb candidats : " + str(len(candidats)) + " Score potentiel : " + str(candidat.score))
 
-
     # si on a tout rempli
     if len(candidat.tuiles_posees) == 37:
         # On a trouvé le meilleur score
@@ -180,6 +180,14 @@ while len(candidats) != 0:
         # Poser une tuile et évaluer le plateau
         plateau.poser_tuile(indice_tuile)
         plateau.evalue()
+        
+        # Debug
+        # if len(plateau.tuiles_posees) == 6 and indice_tuile == 5:
+        #     print("New : ", end='')
+        #     for id in plateau.tuiles_posees:
+        #         print(str(id) + " ", end='')
+        #     print("Nb candidats : " + str(len(candidats)) + " Score potentiel : " + str(plateau.score))
+        #     input("plop")
 
         if plateau.score > score_mini:
             bisect.insort(candidats, plateau)

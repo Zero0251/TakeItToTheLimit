@@ -7,99 +7,71 @@ import bisect
 
 def init_tuiles():
     retour = [
-        Tuile(Symbol.Moon, 0, 0, 2, 1),
-        Tuile(Symbol.Sun, 0, 0, 1, 3),
-        Tuile(Symbol.Sun, 0, 0, 2, 2),
-        Tuile(Symbol.Moon, 0, 0, 1, 2),
-        Tuile(Symbol.Moon, 0, 0, 3, 0),
-        Tuile(Symbol.Sun, 0, 0, 3, 1),
-        Tuile(Symbol.Sun, 0, 1, 2, 1),
-        Tuile(Symbol.Moon, 0, 1, 0, 2),
-        Tuile(Symbol.Moon, 0, 1, 3, 1),
-        Tuile(Symbol.Sun, 0, 1, 2, 3),
-        Tuile(Symbol.Sun, 0, 1, 3, 2),
-        Tuile(Symbol.Moon, 0, 1, 2, 0),
-        Tuile(Symbol.Moon, 0, 2, 0, 3),
-        Tuile(Symbol.Moon, 0, 2, 2, 1),
-        Tuile(Symbol.Sun, 0, 0, 0, 2),
-        Tuile(Symbol.Sun, 0, 2, 0, 2),
-        Tuile(Symbol.Sun, 0, 2, 2, 2),
-        Tuile(Symbol.Moon, 0, 0, 0, 3),
-        Tuile(Symbol.Moon, 0, 2, 3, 2),
-        Tuile(Symbol.Sun, 0, 2, 2, 0),
-        Tuile(Symbol.Sun, 0, 3, 0, 3),
-        Tuile(Symbol.Sun, 0, 3, 1, 2),
-        Tuile(Symbol.Sun, 0, 3, 2, 1),
-        Tuile(Symbol.Moon, 0, 3, 0, 2),
-        Tuile(Symbol.Moon, 0, 3, 2, 2),
-        Tuile(Symbol.Sun, 0, 0, 2, 0),
-        Tuile(Symbol.Sun, 0, 3, 2, 3),
-        
-        Tuile(Symbol.Moon, 40, 0, 1, 0),
-        Tuile(Symbol.Sun, 40, 1, 0, 1),
-        Tuile(Symbol.Moon, 0, 3, 3, 1),
-        Tuile(Symbol.Sun, 0, 2, 3, 3),
-        Tuile(Symbol.Moon, 0, 3, 0, 0),
-        Tuile(Symbol.Moon, 0, 2, 2, 3),
-        Tuile(Symbol.Sun, 0, 1, 1, 2),
-        Tuile(Symbol.Moon, 0, 0, 2, 3),
-        Tuile(Symbol.Moon, 0, 3, 1, 1),
-        Tuile(Symbol.Moon, 40, 1, 0, 0),
-        Tuile(Symbol.Sun, 0, 2, 3, 1),
-        Tuile(Symbol.Moon, 0, 1, 3, 3),
-        Tuile(Symbol.Sun, 0, 3, 3, 2),
-        Tuile(Symbol.Sun, 0, 2, 1, 3),
-        Tuile(Symbol.Sun, 0, 3, 0, 1),
-        Tuile(Symbol.Sun, 40, 1, 1, 0),
-        Tuile(Symbol.Moon, 0, 3, 2, 0),
-        Tuile(Symbol.Moon, 40, 0, 0, 1),
-        Tuile(Symbol.Moon, 0, 1, 1, 3),
-        Tuile(Symbol.Moon, 0, 2, 1, 2),
-        Tuile(Symbol.Moon, 0, 2, 3, 0),
-        Tuile(Symbol.Sun, 80, 0, 0, 0),
-        Tuile(Symbol.Sun, 0, 3, 3, 0),
-        Tuile(Symbol.Moon, 0, 2, 0, 1),
-        Tuile(Symbol.Moon, 0, 3, 3, 3),
-        Tuile(Symbol.Moon, 0, 1, 2, 2),
-        Tuile(Symbol.Sun, 0, 1, 0, 3),
-        Tuile(Symbol.Moon, 0, 0, 3, 2),
-        Tuile(Symbol.Sun, 40, 0, 1, 1),
-        Tuile(Symbol.Sun, 0, 1, 3, 0),
-        Tuile(Symbol.Moon, 80, 1, 1, 1),
-        Tuile(Symbol.Moon, 0, 2, 1, 0),
-        Tuile(Symbol.Sun, 0, 2, 1, 1),
-        Tuile(Symbol.Sun, 0, 2, 0, 0),
-        Tuile(Symbol.Sun, 0, 0, 3, 3),
-        Tuile(Symbol.Sun, 0, 3, 1, 0),
-        Tuile(Symbol.Moon, 0, 3, 1, 3),
-        
-        # Tuile(Symbol.Moon, 0, 0, 2, 1),
-        # Tuile(Symbol.Sun, 0, 0, 1, 3),
+            # Tuile(Symbol.Moon, 0, 0, 2, 1),
+            # Tuile(Symbol.Sun, 0, 0, 1, 3),
         # Tuile(Symbol.Sun, 0, 0, 2, 2),
         # Tuile(Symbol.Moon, 0, 0, 1, 2),
         # Tuile(Symbol.Moon, 0, 0, 3, 0),
         # Tuile(Symbol.Sun, 0, 0, 3, 1),
         # Tuile(Symbol.Sun, 0, 1, 2, 1),
         # Tuile(Symbol.Moon, 0, 1, 0, 2),
-        # Tuile(Symbol.Moon, 0, 1, 3, 1),
-        # Tuile(Symbol.Sun, 0, 1, 2, 3),
+        #     Tuile(Symbol.Moon, 0, 1, 3, 1),
+        #     Tuile(Symbol.Sun, 0, 1, 2, 3),
         # Tuile(Symbol.Sun, 0, 1, 3, 2),
-        # Tuile(Symbol.Moon, 0, 1, 2, 0),
-        # Tuile(Symbol.Moon, 0, 2, 0, 3),
-        # Tuile(Symbol.Moon, 0, 2, 2, 1),
+        #     Tuile(Symbol.Moon, 0, 1, 2, 0),
+        #     Tuile(Symbol.Moon, 0, 2, 0, 3),
+        #     Tuile(Symbol.Moon, 0, 2, 2, 1),
         # Tuile(Symbol.Sun, 0, 0, 0, 2),
-        # Tuile(Symbol.Sun, 0, 2, 0, 2),
-        # Tuile(Symbol.Sun, 0, 2, 2, 2),
+        #     Tuile(Symbol.Sun, 0, 2, 0, 2),
+        #     Tuile(Symbol.Sun, 0, 2, 2, 2),
         # Tuile(Symbol.Moon, 0, 0, 0, 3),
-        # Tuile(Symbol.Moon, 0, 2, 3, 2),
-        # Tuile(Symbol.Sun, 0, 2, 2, 0),
+        #     Tuile(Symbol.Moon, 0, 2, 3, 2),
+        #     Tuile(Symbol.Sun, 0, 2, 2, 0),
         # Tuile(Symbol.Sun, 0, 3, 0, 3),
-        # Tuile(Symbol.Sun, 0, 3, 1, 2),
-        # Tuile(Symbol.Sun, 0, 3, 2, 1),
-        # Tuile(Symbol.Moon, 0, 3, 0, 2),
+        #     Tuile(Symbol.Sun, 0, 3, 1, 2),
+        #     Tuile(Symbol.Sun, 0, 3, 2, 1),
+        #     Tuile(Symbol.Moon, 0, 3, 0, 2),
         # Tuile(Symbol.Moon, 0, 3, 2, 2),
-        # Tuile(Symbol.Sun, 0, 0, 2, 0),
-        # Tuile(Symbol.Sun, 0, 3, 2, 3)
+        #     Tuile(Symbol.Sun, 0, 0, 2, 0),
+        #     Tuile(Symbol.Sun, 0, 3, 2, 3),
+        
+            Tuile(Symbol.Moon, 40, 0, 1, 0),
+        Tuile(Symbol.Sun, 40, 1, 0, 1),
+        Tuile(Symbol.Moon, 0, 3, 3, 1),
+            Tuile(Symbol.Sun, 0, 2, 3, 3),
+            Tuile(Symbol.Moon, 0, 3, 0, 0),
+        Tuile(Symbol.Moon, 0, 2, 2, 3),
+        Tuile(Symbol.Sun, 0, 1, 1, 2),
+        Tuile(Symbol.Moon, 0, 0, 2, 3),
+            Tuile(Symbol.Moon, 0, 3, 1, 1),
+            Tuile(Symbol.Moon, 40, 1, 0, 0),
+            Tuile(Symbol.Sun, 0, 2, 3, 1),
+        Tuile(Symbol.Moon, 0, 1, 3, 3),
+            Tuile(Symbol.Sun, 0, 3, 3, 2),
+        Tuile(Symbol.Sun, 0, 2, 1, 3),
+        Tuile(Symbol.Sun, 0, 3, 0, 1),
+            Tuile(Symbol.Sun, 40, 1, 1, 0),
+            Tuile(Symbol.Moon, 0, 3, 2, 0),
+        Tuile(Symbol.Moon, 40, 0, 0, 1),
+        Tuile(Symbol.Moon, 0, 1, 1, 3),
+            Tuile(Symbol.Moon, 0, 2, 1, 2),
+            Tuile(Symbol.Moon, 0, 2, 3, 0),
+        Tuile(Symbol.Sun, 80, 0, 0, 0),
+            Tuile(Symbol.Sun, 0, 3, 3, 0),
+            Tuile(Symbol.Moon, 0, 2, 0, 1),
+            Tuile(Symbol.Moon, 0, 3, 3, 3),
+            Tuile(Symbol.Moon, 0, 1, 2, 2),
+        Tuile(Symbol.Sun, 0, 1, 0, 3),
+        Tuile(Symbol.Moon, 0, 0, 3, 2),
+            Tuile(Symbol.Sun, 40, 0, 1, 1),
+            Tuile(Symbol.Sun, 0, 1, 3, 0),
+        Tuile(Symbol.Moon, 80, 1, 1, 1),
+            Tuile(Symbol.Moon, 0, 2, 1, 0),
+        Tuile(Symbol.Sun, 0, 2, 1, 1),
+            Tuile(Symbol.Sun, 0, 2, 0, 0),
+        Tuile(Symbol.Sun, 0, 0, 3, 3),
+            Tuile(Symbol.Sun, 0, 3, 1, 0),
+            Tuile(Symbol.Moon, 0, 3, 1, 3),
     ]
     
     # retour.sort()
@@ -146,7 +118,7 @@ places_tuiles_up, places_tuiles = init_places_tuiles()
 
 conversion_score = [[1, 4, 9, 12], [2, 6, 7, 11], [3, 5, 8, 10]]
 
-score_mini = 600  # Aide au départ
+score_mini = 521  # Aide au départ
 indice_plateau = 0
 candidats = [Plateau(indice_plateau, tuiles, places_tuiles, places_tuiles_up, conversion_score)]
 candidats[-1].evalue()
@@ -179,16 +151,17 @@ while len(candidats) != 0:
 
         # Poser une tuile et évaluer le plateau
         plateau.poser_tuile(indice_tuile)
+
+        # print("Debut evaluation ", end='')
+        # for tuile in plateau.tuiles_posees:
+        #     print(str(tuile) + " ", end='')
+        # print("")
+        
         plateau.evalue()
         
-        # Debug
-        # if len(plateau.tuiles_posees) == 6 and indice_tuile == 5:
-        #     print("New : ", end='')
-        #     for id in plateau.tuiles_posees:
-        #         print(str(id) + " ", end='')
-        #     print("Nb candidats : " + str(len(candidats)) + " Score potentiel : " + str(plateau.score))
+        # if len(plateau.tuiles_posees) == 6:
         #     input("plop")
-
+        
         if plateau.score > score_mini:
             bisect.insort(candidats, plateau)
     

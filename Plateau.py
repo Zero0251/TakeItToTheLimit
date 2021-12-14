@@ -180,23 +180,38 @@ class Plateau:
 		# Rq : on ne fait pas le min entre les dispos générale est ça puisque de toute façon on vérifie séparément les dispos générales
 		old_dirs = [1, 0, 0]  # Left to right  # Up to right # Up to left
 		new_dirs = [2, 2, 1]  # Left to right  # Up to right # Up to left
-		self.dispos_par_col = [[[0, 0, 0, 0] for _ in self.colonnes[new_dir]] for new_dir in new_dirs]
-		
-		for dir in range(3):
-			for id_col in range(len(self.combi[dir])):
+		for dir in new_dirs:
+			self.dispos_par_col.append([])
+			for id_col in range(len(self.colonnes[dir])):
 				if len(self.colonnes[dir][id_col].tuiles) != 0:
-					val = self.colonnes[dir][id_col].tuiles[0].directions[dir]
+					self.dispos_par_col[-1].append([-self.vides[dir][id_col]])
 				else:
-					val = self.combi[dir][id_col] - 1
-				self.__update_dispos_par_col_combi(dir, id_col, val, self.combi[dir][id_col], 1, -self.vides[dir][id_col])
+					self.dispos_par_col[-1].append([0, 0, 0, -self.vides[dir][id_col]])
+		
+		for id_col in range(len(self.combi[0])):
+			for i in self.col_impactees[1][id_col]:
+				for val in self.all_val_possible[1][id_col][i][self.combi[0][id_col]]:
+					self.dispos_par_col[1][i][val] += 1
+			for i in self.col_impactees[2][id_col]:
+				for val in self.all_val_possible[2][id_col][i][self.combi[0][id_col]]:
+					self.dispos_par_col[2][i][val] += 1
+		for id_col in range(len(self.combi[1])):
+			for i in self.col_impactees[0][id_col]:
+				for val in self.all_val_possible[0][id_col][i][self.combi[1][id_col]]:
+					self.dispos_par_col[0][i][val] += 1
 	
 		#  Ne pas oublier les colonnes non pleines avec un score nul
 		col_impactees_joker = self.__init_col_impactees(self.cols_non_remplies_score_nul, self.colonnes)
 		for indice_impact in range(3):
 			for id_col_modifiee in range(len(self.cols_non_remplies_score_nul[old_dirs[indice_impact]])):
 				for id_col_impactee in col_impactees_joker[indice_impact][id_col_modifiee]:
-					for val in range(0, 4):
-						self.dispos_par_col[indice_impact][id_col_impactee][val] += 1
+					for val in self.dispos_par_col[indice_impact][id_col_impactee]:
+						val += 1
+
+	def __get_val_combi(self, dir, id_col):
+		if len(self.colonnes[dir][id_col].tuiles) != 0:
+			return self.colonnes[dir][id_col].tuiles[0].directions[dir]
+		return self.combi[dir][id_col] - 1
 
 	def __combi_possible(self, dispos):
 		for d in dispos:
@@ -281,30 +296,31 @@ class Plateau:
 						dg[old_val] += v[i]
 						if c[i] > 0:
 							dg[c[i] - 1] -= v[i]
-						self.__update_dispos_par_col(dir, i, old_val, c[i] - 1, c[i] + 1, c[i], v[i])
+						self.__update_dispos_par_col_combi(dir, i, c[i] + 1, c[i])
 						self.__evalue_all_dirs(dir, score2, i)
-						self.__update_dispos_par_col(dir, i, c[i] - 1, old_val, c[i], c[i] + 1, v[i])
+						self.__update_dispos_par_col_combi(dir, i, c[i], c[i] + 1)
 						if c[i] > 0:
 							dg[c[i] - 1] += v[i]
 						dg[old_val] -= v[i]
 						c[i] += 1
 	
-	def __update_dispos_par_col(self, dir, id_col, old_val, new_val, old_combi, new_combi, vides):
-		self.__update_dispos_par_col_combi(dir, id_col, old_val, old_combi, -1, vides)
-		self.__update_dispos_par_col_combi(dir, id_col, new_val, new_combi, 1, -vides)
-	
-	def __update_dispos_par_col_combi(self, dir, id_col, val, combi, ajout, vides):
+	def __update_dispos_par_col_combi(self, dir, id_col, old_combi, new_combi):
 		if dir == 0:
-			self.__update_dispos_par_col_combi_val(1, id_col, combi, ajout)
-			self.__update_dispos_par_col_combi_val(2, id_col, combi, ajout)
+			self.__update_dispos_par_col_combi_val(1, id_col, old_combi, new_combi)
+			self.__update_dispos_par_col_combi_val(2, id_col, old_combi, new_combi)
 		elif dir == 1:
-			if val >= 0:
-				self.dispos_par_col[2][id_col][val] += vides
-			self.__update_dispos_par_col_combi_val(0, id_col, combi, ajout)
-		elif val >= 0:
-			# print("Positif " + str(val) + " " + str(vides))
-			self.dispos_par_col[0][id_col][val] += vides
-			self.dispos_par_col[1][id_col][val] += vides
+			if old_combi > 0:
+				self.dispos_par_col[2][id_col][old_combi - 1] += self.vides[dir][id_col]
+			if new_combi > 0:
+				self.dispos_par_col[2][id_col][new_combi - 1] -= self.vides[dir][id_col]
+			self.__update_dispos_par_col_combi_val(0, id_col, old_combi, new_combi)
+		else:
+			if old_combi > 0:
+				self.dispos_par_col[0][id_col][old_combi - 1] += self.vides[dir][id_col]
+				self.dispos_par_col[1][id_col][old_combi - 1] += self.vides[dir][id_col]
+			if new_combi > 0:
+				self.dispos_par_col[0][id_col][new_combi - 1] -= self.vides[dir][id_col]
+				self.dispos_par_col[1][id_col][new_combi - 1] -= self.vides[dir][id_col]
 			
 	def __init_col_impactees(self, cols_modifiees, cols_impactees):
 		base = [
@@ -328,14 +344,32 @@ class Plateau:
 		
 	def __init_val_possible(self, old_dir, new_dir):
 		old_cols = self.colonnes[old_dir]
-		val_possible = [[{0, 1, 2, 3}] for _ in old_cols]
+		val_possible = []
 		for i in range(len(old_cols)):
+			val_possible.append([])
 			if len(old_cols[i].tuiles) != 0:
-				val = old_cols[i].tuiles[0].directions[old_dir]
-				val_possible[i].append(set([self.tuiles[id].directions[new_dir] for id in self.tuiles_restantes if self.tuiles[id].directions[old_dir] == val]))
+				old_val = old_cols[i].tuiles[0].directions[old_dir]
+				for new_col in self.colonnes[new_dir]:
+					val_possible[-1].append([])
+					if len(new_col.tuiles) != 0:
+						new_val = new_col.tuiles[0].directions[new_dir]
+						val_possible[-1][-1].append({0})
+						val_possible[-1][-1].append(set([0 for id in self.tuiles_restantes if self.tuiles[id].directions[old_dir] == old_val and self.tuiles[id].directions[new_dir] == new_val]))
+					else:
+						val_possible[-1][-1].append({0, 1, 2, 3})
+						val_possible[-1][-1].append(set([self.tuiles[id].directions[new_dir] for id in self.tuiles_restantes if self.tuiles[id].directions[old_dir] == old_val]))
 			else:
-				for val in range(0, 4):
-					val_possible[i].append(set([self.tuiles[id].directions[new_dir] for id in self.tuiles_restantes if self.tuiles[id].directions[old_dir] == val]))
+				for new_col in self.colonnes[new_dir]:
+					val_possible[-1].append([])
+					if len(new_col.tuiles) != 0:
+						new_val = new_col.tuiles[0].directions[new_dir]
+						val_possible[-1][-1].append({0})
+						for old_val in range(0, 4):
+							val_possible[-1][-1].append(set([0 for id in self.tuiles_restantes if self.tuiles[id].directions[old_dir] == old_val and self.tuiles[id].directions[new_dir] == new_val]))
+					else:
+						val_possible[-1][-1].append({0, 1, 2, 3})
+						for old_val in range(0, 4):
+							val_possible[-1][-1].append(set([self.tuiles[id].directions[new_dir] for id in self.tuiles_restantes if self.tuiles[id].directions[old_dir] == old_val]))
 		return val_possible
 		
 	def __init_all_val_possible(self):
@@ -345,8 +379,10 @@ class Plateau:
 			self.__init_val_possible(0, 1),  # Up to left
 		]
 	
-	def __update_dispos_par_col_combi_val(self, indice_impact, indice_col, val_combi, ajout):
+	def __update_dispos_par_col_combi_val(self, indice_impact, indice_col, old_combi, new_combi):
 		for i in self.col_impactees[indice_impact][indice_col]:
-			for val in self.all_val_possible[indice_impact][indice_col][val_combi]:
-				self.dispos_par_col[indice_impact][i][val] += ajout
+			for val in self.all_val_possible[indice_impact][indice_col][i][old_combi]:
+				self.dispos_par_col[indice_impact][i][val] -= 1
+			for val in self.all_val_possible[indice_impact][indice_col][i][new_combi]:
+				self.dispos_par_col[indice_impact][i][val] += 1
 				

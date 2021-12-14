@@ -7,8 +7,8 @@ import bisect
 
 def init_tuiles():
     retour = [
-            # Tuile(Symbol.Moon, 0, 0, 2, 1),
-            # Tuile(Symbol.Sun, 0, 0, 1, 3),
+        #     Tuile(Symbol.Moon, 0, 0, 2, 1),
+        #     Tuile(Symbol.Sun, 0, 0, 1, 3),
         # Tuile(Symbol.Sun, 0, 0, 2, 2),
         # Tuile(Symbol.Moon, 0, 0, 1, 2),
         # Tuile(Symbol.Moon, 0, 0, 3, 0),
@@ -151,16 +151,7 @@ while len(candidats) != 0:
 
         # Poser une tuile et évaluer le plateau
         plateau.poser_tuile(indice_tuile)
-
-        # print("Debut evaluation ", end='')
-        # for tuile in plateau.tuiles_posees:
-        #     print(str(tuile) + " ", end='')
-        # print("")
-        
         plateau.evalue()
-        
-        # if len(plateau.tuiles_posees) == 6:
-        #     input("plop")
         
         if plateau.score > score_mini:
             bisect.insort(candidats, plateau)

@@ -47,6 +47,7 @@ class Plateau:
 		self.dispos_generales = []
 		self.dispos_par_col = []
 		self.all_val_possible = []
+		self.all_val_possible_delta = []
 		self.col_impactees = []
 		self.max_score_possible = 0
 		
@@ -144,10 +145,11 @@ class Plateau:
 				elif len(col.tuiles) == len(col) and col.score_max != 0:
 					self.score += self.conversion_score[dir][col.tuiles[0].directions[dir]] * len(col)
 					
-		if len(self.tuiles_posees) < 4:
+		if len(self.tuiles_posees) < 7:
 			self.score += self.__evalue_dir(score_dir)
 		else:
 			self.__init_all_val_possible()
+			self.__init_all_val_possible_delta()
 			self.col_impactees = self.__init_col_impactees(self.colonnes, self.colonnes)
 			self.__init_dispos_par_colonne()
 			self.__evalue_all_dirs(0, score_dir[0] + score_dir[1] + score_dir[2], 0)
@@ -379,10 +381,54 @@ class Plateau:
 			self.__init_val_possible(0, 1),  # Up to left
 		]
 	
+	def __init_val_possible_delta(self, old_dir, new_dir):
+		old_cols = self.colonnes[old_dir]
+		val_possible = []
+		for i in range(len(old_cols)):
+			val_possible.append([])
+			if len(old_cols[i].tuiles) != 0:
+				old_val = old_cols[i].tuiles[0].directions[old_dir]
+				for new_col in self.colonnes[new_dir]:
+					val_possible[-1].append([])
+					if len(new_col.tuiles) != 0:
+						new_val = new_col.tuiles[0].directions[new_dir]
+						possible_A = set([0 for id in self.tuiles_restantes if self.tuiles[id].directions[old_dir] == old_val and self.tuiles[id].directions[new_dir] == new_val])
+						possible_B = {0}
+					else:
+						possible_A = set([self.tuiles[id].directions[new_dir] for id in self.tuiles_restantes if self.tuiles[id].directions[old_dir] == old_val])
+						possible_B = {0, 1, 2, 3}
+					val_possible[-1][-1].append([{-1}, possible_B.difference(possible_A)]) # 0 => 1
+					val_possible[-1][-1].append([possible_A.difference(possible_B)]) # 1 => 0
+			else:
+				for new_col in self.colonnes[new_dir]:
+					val_possible[-1].append([])
+					if len(new_col.tuiles) != 0:
+						new_val = new_col.tuiles[0].directions[new_dir]
+						possibles = [{0}]
+						for old_val in range(0, 4):
+							possibles.append(set([0 for id in self.tuiles_restantes if self.tuiles[id].directions[old_dir] == old_val and self.tuiles[id].directions[new_dir] == new_val]))
+					else:
+						possibles = [{0, 1, 2, 3}]
+						for old_val in range(0, 4):
+							possibles.append(set([self.tuiles[id].directions[new_dir] for id in self.tuiles_restantes if self.tuiles[id].directions[old_dir] == old_val]))
+					val_possible[-1][-1].append([{-1}, possibles[0].difference(possibles[1])])  # 0 => 1
+					val_possible[-1][-1].append([possibles[1].difference(possibles[0]), {-1}, possibles[1].difference(possibles[2])])  # 1 => 0, 1=> 2
+					val_possible[-1][-1].append([{-1}, possibles[2].difference(possibles[1]), {-1}, possibles[2].difference(possibles[3])])  # 2 => 1, 2=> 3
+					val_possible[-1][-1].append([{-1}, {-1}, possibles[3].difference(possibles[2]), {-1}, possibles[3].difference(possibles[4])])  # 3 => 2, 3 => 4
+					val_possible[-1][-1].append([{-1}, {-1}, {-1}, possibles[4].difference(possibles[3])])  # 4 => 3
+					
+		return val_possible
+	
+	def __init_all_val_possible_delta(self):
+		self.all_val_possible_delta = [
+			self.__init_val_possible_delta(1, 2),  # Left to right
+			self.__init_val_possible_delta(0, 2),  # Up to right
+			self.__init_val_possible_delta(0, 1),  # Up to left
+		]
 	def __update_dispos_par_col_combi_val(self, indice_impact, indice_col, old_combi, new_combi):
 		for i in self.col_impactees[indice_impact][indice_col]:
-			for val in self.all_val_possible[indice_impact][indice_col][i][old_combi]:
+			for val in self.all_val_possible_delta[indice_impact][indice_col][i][old_combi][new_combi]:
 				self.dispos_par_col[indice_impact][i][val] -= 1
-			for val in self.all_val_possible[indice_impact][indice_col][i][new_combi]:
+			for val in self.all_val_possible_delta[indice_impact][indice_col][i][new_combi][old_combi]:
 				self.dispos_par_col[indice_impact][i][val] += 1
 				
